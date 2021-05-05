@@ -2,6 +2,27 @@
 const sentence = document.querySelector(".sentence");
 const wrongCounter = document.querySelector(".wrongCounter");
 
+const typingSpeedCompare = {
+  10: "At this speed, your typing speed is way below average, and you should focus on proper typing technique (explained below).",
+
+  20: "Same as above.",
+
+  30: "Same as above.",
+
+  40: "At 41 , you are now an average typist. You still have significant room for improvement.",
+
+  50: "Congratulations! You’re above average.",
+
+  60: "This is the speed required for most high-end typing jobs. You can now be a professional typist!",
+
+  70: "You are way above average! You would qualify for any typing job assuming your typing accuracy is high enough.",
+
+  80: "You’re a catch! Any employer looking for a typist would love to have you.",
+
+  90: "At this typing speed, you’re probably a gamer, coder, or genius. Either way, you’re doing great!",
+
+  100: "You are in the top 1% of typists! Congratulations!",
+};
 // api url :
 const apiUrl =
   "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
@@ -53,9 +74,6 @@ async function initialStructure() {
     // Storing the start time.
     console.log(e);
 
-    document.querySelector(".weTyping").innerHTML = sentenceText[index];
-    document.querySelector(".toType").innerHTML = e.key;
-
     if (started == false) startCondition();
 
     // Cheching the winning condition.
@@ -90,7 +108,7 @@ function recordGraphData() {
 // Condition to restart the game.
 async function onRestart() {
   let isConnectedToInternet = window.navigator.onLine;
-
+  endDisplay.style.display = "none";
   if (isConnectedToInternet) {
     sentenceText = await getRandomText();
     if (sentenceText === undefined) {
@@ -163,10 +181,13 @@ function endCondition() {
 
   console.log(`Time taken to typing: ${timePassedInSeconds}sec`);
 
+  endDisplay.style.display = "block";
+
   endDisplay.innerHTML = `
     <h1> Wpm : ${typingSpeed.toFixed(0)} </h1>
     <h1> Raw Speed : ${rawSpeed.toFixed(0)} </h1>
     <h1> Acurracy : ${accuracy.toFixed(2)} </h1>
+    <p>${typingSpeedCompare[Math.floor(typingSpeed / 10) * 10]}</p>
     `;
   textInput.style.display = "none";
 }

@@ -12,20 +12,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="popUpContainer">
+        <div class="popUp">
+            <h3>Please use physical keyboard for typing</h3>
+            <p>Donot use mobile keyboard as it may cause some issues.</p>
+            <button class="custom-btn btn-11" onclick="document.querySelector('.popUpContainer').style.display = 'none';">Start Typing<div class="dot"></div></button>
+        </div>
+    </div>
+
     <div class="mainContainer">
         <div class="sentence"></div>
         
         <div class="myTyping">
-            <textarea id="myTyping" ></textarea>
+            <textarea id="myTyping" rows="1" Placeholder="Start Typing..."></textarea>
             <a onclick="onRestart();" id="restart"><i class="fas fa-sync-alt"></i></a>
         </div>
 
         <div class="counterContainer">
-            <div class="wrongCounter"></div>
-
-            <div class="weTyping"></div>
-            <div class="toType"></div>
-            
+            <div class="wrongCounter"></div>           
             <!-- <div class="letterCounter"></div> -->
             <!-- <div class="backSpacesCounter"></div> -->
             <div class="speedCounter">

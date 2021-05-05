@@ -49,12 +49,6 @@ async function initialStructure() {
   await onRestart();
 
   textInput.addEventListener("keydown", (e) => {
-    // Storing the start time.
-    console.log(e);
-
-    document.querySelector(".weTyping").innerHTML = sentenceText[index];
-    document.querySelector(".toType").innerHTML = e.key;
-
     if (started == false) startCondition();
 
     // Cheching the winning condition.
