@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/all.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"
+        integrity="sha512-VMsZqo0ar06BMtg0tPsdgRADvl0kDHpTbugCBBrL55KmucH6hP9zWdLIWY//OTfMnzz6xWQRxQqsUFefwHuHyg=="
+        crossorigin="anonymous"></script>
+    <title>Typing Offline</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mainContainer">
+        <div class="sentence"></div>
+        
+        <div class="myTyping">
+            <textarea id="myTyping" ></textarea>
+            <a onclick="onRestart();" id="restart"><i class="fas fa-sync-alt"></i></a>
+        </div>
+
+        <div class="counterContainer">
+            <div class="wrongCounter"></div>
+
+            <div class="weTyping"></div>
+            <div class="toType"></div>
+            
+            <!-- <div class="letterCounter"></div> -->
+            <!-- <div class="backSpacesCounter"></div> -->
+            <div class="speedCounter">
+                <div class="actualSpeed"></div>
+                <div class="rawSpeed"></div>
+            </div>        
+            <!-- <div class="indicator"></div> to show that which phase is going on,wrong or right -->
+        </div>
+
+        <div class="endDisplay"></div>
+    </div>
+
+    <div class="graphContainer">
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+
+        <script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.mainContainer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 20px);
+  height: calc(100vh - 20px);
+
+  margin: 10px;
+
+  background-color: #fff;
+
+  border: 2px solid #000;
+  border-radius: 5px;
+}
+
+.graphContainer {
+  padding: 20px;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 20px);
+
+  margin: 10px;
+
+  background-color: #fff;
+
+  border: 2px solid #000;
+  border-radius: 5px;
+}
+
+.sentence {
+  width: 75%;
+}
+
+#wrong {
+  color: red;
+  text-decoration: underline;
+}
+#right {
+  color: #000;
+}
+#remaining {
+  color: gray;
+}
+#currentText {
+  color: blue;
+  text-decoration: underline;
+}
+
+#restart {
+  transform: translateX(100%);
+
+  margin: 20px 0 10px 0;
+  transition: 1.5s;
+
+  cursor: pointer;
+}
+
+.myTyping {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+}
+
+textarea#myTyping {
+  font-size: 20px;
+  margin: 20px 0 10px 0;
+}
+
+#restart i:active {
+  animation: spin-animation 1s infinite;
+  display: inline-block;
+}
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(359deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(359deg);
+  }
+}
+
+@media (max-width: 780px) {
+  .sentence h1 {
+    font-size: 20px;
+  }
+}
