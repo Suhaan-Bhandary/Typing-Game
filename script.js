@@ -3,7 +3,8 @@ const sentence = document.querySelector(".sentence");
 const wrongCounter = document.querySelector(".wrongCounter");
 
 // api url :
-// const apiUrl = "https://numbersapi.com/random?json"; // number api
+const apiUrl =
+  "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
 
 const facts = [
   "A parent may kill its children if the task assigned to them is no longer needed.",
@@ -42,6 +43,7 @@ let wrongCount,
 let wordTyping;
 let started, startTime, endTime, previousTime;
 let graphdata = [];
+
 initialStructure(); // To form the initial structure of the page.
 
 async function initialStructure() {
@@ -88,11 +90,18 @@ function recordGraphData() {
 // Condition to restart the game.
 async function onRestart() {
   let isConnectedToInternet = window.navigator.onLine;
+
   if (isConnectedToInternet) {
     sentenceText = await getRandomText();
     if (sentenceText === undefined) {
-      sentenceText =
-        "Whats the object-oriented way to become wealthy? : inheritence";
+      let num = Math.floor(Math.random() * facts.length);
+      sentenceText = facts[num];
+    } else {
+      console.log("From api");
+      sentenceText = sentenceText.replace(
+        /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
+        ""
+      );
     }
   } else {
     let num = Math.floor(Math.random() * facts.length);
@@ -122,16 +131,10 @@ async function onRestart() {
 }
 
 function getRandomText() {
-  return fetch("https://v2.jokeapi.dev/joke/Programming?type=single")
+  return fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
-      let sourceString = data.joke;
-      let outString = sourceString.replace(
-        /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
-        ""
-      );
-      console.log(outString);
-      return outString;
+      return data.joke;
     })
     .catch((err) => {
       console.error(err);
