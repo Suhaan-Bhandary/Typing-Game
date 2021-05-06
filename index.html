@@ -27,8 +27,10 @@
             <textarea id="myTyping" rows="1" Placeholder="Start Typing..."></textarea>
 
             <div class="buttonContainer">
-                <a onclick="onRestart();" id="restart"><i class="fas fa-sync-alt"></i></a>              
-                <button class="custom-btn btn-11 again" onclick="OnPlayAgain();">
+                <a onclick="onRestart('restart');" id="restart"><i class="fas fa-sync-alt"></i></a>
+                <a onclick="onRestart('userInput');" id="restart"><i class="fas fa-download"></i></a>
+
+                <button class="custom-btn btn-11 again" onclick="onRestart('playAgain');">
                     Again
                 </button>
             </div>
