@@ -331,6 +331,9 @@ function generateGraph() {
     options: {
       scales: {
         y: {
+          ticks: {
+            fontSize: 40,
+          },
           min:
             MinimumValue - 5 > 0
               ? Math.floor(MinimumValue - 5)
