@@ -140,6 +140,7 @@ async function onRestart(functionType) {
       break;
     case "playAgain":
       graphdata = [];
+      document.querySelector("#again").style.display = "none";
       break;
     case "userInput":
       PlayerData = [];
