@@ -1,9 +1,5 @@
 /* Css of the button as it used it two places so a separate css file. */
 
-button {
-    margin: 20px;
-}
-
 .custom-btn {
     font-family: "Lato", sans-serif;
     font-weight: 500;
@@ -99,5 +95,7 @@ button {
 
 /* For responsiveness */
 @media (max-width: 780px) {
-
+    button {
+        margin: 10px;
+    }
 }

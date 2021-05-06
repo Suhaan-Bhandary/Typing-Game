@@ -367,9 +367,6 @@ function generateGraph() {
     options: {
       scales: {
         y: {
-          ticks: {
-            fontSize: 40,
-          },
           min: 0,
         },
       },

@@ -29,6 +29,7 @@
 
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .popUp h3 {
@@ -44,4 +45,21 @@
 }
 
 /* For responsiveness */
-@media (max-width: 780px) {}
+@media (max-width: 780px) {
+    .popUp {
+        height: 50%;
+    }
+
+    .popUp h3 {
+        font-size: 20px;
+
+        padding: 20px;
+    }
+
+    .popUp p {
+        font-size: 20px;
+
+        padding: 10px;
+    }
+
+}

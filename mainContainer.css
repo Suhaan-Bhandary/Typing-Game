@@ -99,7 +99,7 @@ h1 {
 }
 
 .counterContainer .buttonContainer{
-
+padding: 25px;
 }
 
 .counterContainer #restart {
@@ -141,24 +141,16 @@ h1 {
 #userInput i:active {
     display: inline-block;
 
-    animation: up-down-animation 1s infinite;
+    animation: up-down-animation 0.5s ease-in-out;
 }
 
 @keyframes up-down-animation {
-    0% {
-        transform: rotate(0deg);
+    0%{
+        transform: translateY(0);
     }
 
-    25% {
-        transform: rotate(359deg);
-    }
-
-    50% {
-        transform: rotate(0deg);
-    }
-
-    75% {
-        transform: rotate(359deg);
+    100% {
+        transform: translateY(-10px);
     }
 }
 
@@ -175,7 +167,16 @@ h1 {
     border: 1px solid;
 }
 
+@media (max-width: 1000px) {
+    .myTyping textarea#myTyping {
+        width:60%;
+    }
+}
 @media (max-width: 780px) {
+    .sentence {
+        width: 90%;
+    }
+
     .sentence h1 {
         font-size: 20px;
 
@@ -187,4 +188,37 @@ h1 {
 
         color: #353535;
     }
+
+    .myTyping {
+        width: 80%;
+    }
+
+    .myTyping textarea#myTyping {
+        width: 100%;
+        font-size: 15px;
+        padding: 5px;
+    }
+
+    .counterContainer .buttonContainer {
+        padding: 10px 0 0 0;
+    }
+
+    
+
+    #restart {
+        margin: 20px;
+    }
+
+    .endDisplay {
+        padding: 20px 10px;
+    }
+
+    .endDisplay h1 {
+        font-size: 20px;
+    }
+
+    .endDisplay p {
+        padding: 10px 0;
+    }
+
 }
