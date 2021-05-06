@@ -98,8 +98,8 @@ h1 {
 
 }
 
-.counterContainer .buttonContainer{
-padding: 25px;
+.counterContainer .buttonContainer {
+    padding: 15px;
 }
 
 .counterContainer #restart {
