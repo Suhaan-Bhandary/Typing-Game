@@ -1,0 +1,190 @@
+/* This css file contains the Default css and the mainContainer css for the project. */
+* {
+    font-family: "Cormorant Garamond", serif;
+
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Default style for any paragraph element.*/
+p {
+    font-family: "Lato", sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+
+    text-align: center;
+
+    color: #676767;
+}
+
+/* Default style for any h1 element i.e element used in sentence */
+h1 {
+    font-size: 50px;
+
+    position: relative;
+
+    text-align: center;
+
+    color: #353535;
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+
+    width: calc(100% - 20px);
+    height: calc(100vh - 20px);
+    margin: 10px;
+    padding: 20px;
+
+    border: 5px solid #000;
+    border-radius: 5px;
+    background: #e0e5ec;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.sentence {
+    width: 75%;
+}
+
+#wrong {
+    text-decoration: underline;
+
+    color: red;
+}
+
+#right {
+    color: #000;
+}
+
+#remaining {
+    color: gray;
+}
+
+#currentText {
+    text-decoration: underline;
+
+    color: blue;
+}
+
+.myTyping {
+    display: flex;
+
+    width: 50%;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+.myTyping textarea#myTyping {
+    font-size: 30px;
+
+    width: 40%;
+    margin: 20px 0 10px 0;
+    padding: 10px;
+
+    background: #e9ebec;
+}
+
+.counterContainer{
+
+}
+
+.counterContainer .wrongCounter{
+
+}
+
+.counterContainer .buttonContainer{
+
+}
+
+.counterContainer #restart {
+    padding: 5px 20px;
+    cursor: pointer;
+    transition: 1.5s;
+}
+
+#restart i:active {
+    display: inline-block;
+
+    animation: spin-animation 1s infinite;
+}
+
+@keyframes spin-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(359deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(359deg);
+    }
+}
+
+.counterContainer #userInput {
+    padding: 5px 20px;
+    cursor: pointer;
+    transition: 1.5s;
+}
+
+#userInput i:active {
+    display: inline-block;
+
+    animation: up-down-animation 1s infinite;
+}
+
+@keyframes up-down-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(359deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(359deg);
+    }
+}
+
+#again {
+    display: none;
+}
+
+.endDisplay {
+    display: none;
+
+    margin: 20px;
+    padding: 30px 100px;
+
+    border: 1px solid;
+}
+
+@media (max-width: 780px) {
+    .sentence h1 {
+        font-size: 20px;
+
+        position: relative;
+
+        padding: 10px;
+
+        text-align: center;
+
+        color: #353535;
+    }
+}
