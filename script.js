@@ -50,9 +50,6 @@ const facts = [
 const textInput = document.querySelector("#myTyping");
 const endDisplay = document.querySelector(".endDisplay");
 
-const actualSpeed = document.querySelector(".actualSpeed");
-const rawSpeed = document.querySelector(".rawSpeed");
-
 // initializing the sentence.
 let wrongCount,
   letterCount,
