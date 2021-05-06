@@ -50,9 +50,6 @@ const facts = [
 const textInput = document.querySelector("#myTyping");
 const endDisplay = document.querySelector(".endDisplay");
 
-const actualSpeed = document.querySelector(".actualSpeed");
-const rawSpeed = document.querySelector(".rawSpeed");
-
 // initializing the sentence.
 let wrongCount,
   letterCount,
@@ -60,7 +57,6 @@ let wrongCount,
   flag,
   index,
   sentenceText = "",
-  playAgain = false,
   chartCreated = false;
 
 let myChart;
@@ -76,7 +72,7 @@ let graphdata = [];
 initialStructure(); // To form the initial structure of the page.
 
 async function initialStructure() {
-  await onRestart();
+  await onRestart("restart");
 
   textInput.addEventListener("keydown", (e) => {
     // Storing the start time.
@@ -110,42 +106,69 @@ function recordGraphData() {
   graphdata.push([wordTyping, timeTakenToTypeAWordInSeconds]);
 }
 
-// Condition to restart the game.
-async function onRestart() {
-  graphdata = [];
-  started = false;
+async function textGenerator() {
   let isConnectedToInternet = window.navigator.onLine;
-  endDisplay.style.display = "none";
 
-  if (!playAgain) {
-    PlayerData = [];
-    if (isConnectedToInternet) {
-      sentenceText = await getRandomText();
-      if (sentenceText === undefined) {
-        let num = Math.floor(Math.random() * facts.length);
-        sentenceText = facts[num];
-      } else {
-        sentenceText = sentenceText.replace(
-          /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
-          ""
-        );
-      }
-    } else {
+  if (isConnectedToInternet) {
+    sentenceText = await getRandomTextThroughApi();
+    if (sentenceText === undefined) {
       let num = Math.floor(Math.random() * facts.length);
       sentenceText = facts[num];
+    } else {
+      sentenceText = sentenceText.replace(
+        /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
+        ""
+      );
     }
+  } else {
+    let num = Math.floor(Math.random() * facts.length);
+    sentenceText = facts[num];
+  }
+}
+
+// Condition to restart the game.
+async function onRestart(functionType) {
+  // Removing the endDisplay when the function is called.
+  endDisplay.style.display = "none";
+
+  // We check the type of function we have to use.
+  switch (functionType) {
+    case "restart":
+      PlayerData = [];
+      graphdata = [];
+      await textGenerator();
+      break;
+    case "playAgain":
+      graphdata = [];
+      document.querySelector("#again").style.display = "none";
+      break;
+    case "userInput":
+      PlayerData = [];
+      graphdata = [];
+
+      do {
+        sentenceText = prompt("Enter a sentence  :  ");
+      } while (
+        sentenceText == null ||
+        sentenceText == undefined ||
+        sentenceText.length == 0
+      );
+      break;
+    default:
+      console.error("NOT valid function call");
+      break;
   }
 
   // "Work hard. Push yourself, because no one else is going to do it for you.";
   sentence.innerHTML = `<h1>${sentenceText}</h1>`;
 
+  index = 0;
+  wordTyping = [];
+  started = false;
   wrongCount = 0;
   letterCount = 0;
   backSpacesRequired = 0;
   flag = true; // if flag is false then the last typed key will wrong.
-  index = 0;
-
-  wordTyping = [];
 
   // To check Restart the board :
   textInput.style.display = "block";
@@ -156,12 +179,7 @@ async function onRestart() {
   refreshWindow();
 }
 
-function OnPlayAgain() {
-  playAgain = true;
-  onRestart();
-  playAgain = false;
-}
-function getRandomText() {
+function getRandomTextThroughApi() {
   return fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
@@ -186,7 +204,7 @@ function endCondition() {
 
   generateGraph();
 
-  document.querySelector(".again").style.display = "inline-block"; // For the again button
+  document.querySelector("#again").style.display = "inline-block"; // For the again button
 
   let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
   let timePassedInMinutes = timePassedInSeconds / 60;
@@ -349,9 +367,6 @@ function generateGraph() {
     options: {
       scales: {
         y: {
-          ticks: {
-            fontSize: 40,
-          },
           min: 0,
         },
       },

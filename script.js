@@ -1,13 +1,19 @@
-// selecting all the required elements.
+// JavaScript Code for the Typing Game.
+
+// Grabbing all the required elements.
 const sentence = document.querySelector(".sentence");
 const wrongCounter = document.querySelector(".wrongCounter");
+const textInput = document.querySelector("#myTyping");
+const endDisplay = document.querySelector(".endDisplay");
+const againButton = document.querySelector("#again");
 
+// Feedback text for the typing game.
 const typingSpeedCompare = {
   10: "At this speed, your typing speed is way below average, and you should focus on proper typing technique (explained below).",
 
-  20: "Same as above.",
+  20: "At this speed, your typing speed is way below average, and you should focus on proper typing technique (explained below).",
 
-  30: "Same as above.",
+  30: "At this speed, your typing speed is way below average, and you should focus on proper typing technique (explained below).",
 
   40: "At 41 , you are now an average typist. You still have significant room for improvement.",
 
@@ -23,14 +29,11 @@ const typingSpeedCompare = {
 
   100: "You are in the top 1% of typists! Congratulations!",
 };
-// api url :
-const apiUrl =
-  "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
 
+// A bag of sentence to use when the api is down or the internet is down.
 const facts = [
   "A parent may kill its children if the task assigned to them is no longer needed.",
   "Writing cryptic code is deep joy in the soul of a programmer.",
-
   "A coder is a person who transforms cola & pizza to code 'Refresh button' of the windows desktop is not some magical tool which keeps your computer healthy.",
   "The programmers are the main source of income for eye doctors.",
   "If any programmer orders three beers with his fingers, he normally only gets two.",
@@ -42,55 +45,50 @@ const facts = [
   "The point is not getting the ball in the hole but how many strokes it takes",
   "A programmer is not a PC repairman.",
 ];
-// To display letterTyped :
-// const letterCounter = document.querySelector(".letterCounter");
-// const backSpacesCounter = document.querySelector(".backSpacesCounter");
-// const indicator = document.querySelector(".indicator");
 
-const textInput = document.querySelector("#myTyping");
-const endDisplay = document.querySelector(".endDisplay");
+let sentenceText = "";
 
-// initializing the sentence.
-let wrongCount,
-  letterCount,
-  backSpacesRequired,
-  flag,
-  index,
-  sentenceText = "",
+// Assigning variables :
+
+// All this are changed when we restart the game.
+let backSpacesRequired = 0, // To keep track of the wrong letters typed.
+  index = 0,
+  wrongCount = 0,
+  letterCount = 0,
+  currentWordTyping = [], // To keep track of the word we are typing.
+  typingStarted = false,
+  errorFreeFlag = true;
+
+// Time tracking variables :
+let startTime, previousTime, endTime;
+
+// Graph Variables :
+let PlayerData = [],
+  graphdata = [],
   chartCreated = false;
 
-let myChart;
-// if flag is false then the last typed key will wrong.
-let wordTyping;
-let started = false,
-  startTime,
-  endTime,
-  previousTime;
-let PlayerData = [];
-let graphdata = [];
+// Running the setup :
+initialStructure();
 
-initialStructure(); // To form the initial structure of the page.
-
+// The initialStructure is async as we will wait for the api to respond and then store it in the variable.
 async function initialStructure() {
-  await onRestart("restart");
+  // Waiting for the onRestart function to End.
+  await onRestartCondition("restart");
 
+  // Initializing the event listener for key events.
   textInput.addEventListener("keydown", (e) => {
-    // Storing the start time.
-    if (started == false) startCondition();
+    if (!typingStarted) typingStartedCondition(); // Condtion to check if Typing is Started.
 
-    // Cheching the winning condition.
-    if (index === sentenceText.length - 1) {
-      endCondition();
-      return;
-    }
-
+    // Function to check if the key pressed is right or wrong and perform further actions.
     checkKeyCondition(e);
 
     // Checking if the word ended and also all the previous words are correctly typed.
-    if (e.key == " " && backSpacesRequired == 0) {
-      recordGraphData();
+    if (e.key == " " && backSpacesRequired === 0) {
+      recordGraphData(); // Records the data for every word in the graph.
+
+      // Reseting the textInput and also the current word.
       textInput.value = "";
-      wordTyping = [];
+      currentWordTyping = [];
     }
 
     refreshWindow();
@@ -99,38 +97,9 @@ async function initialStructure() {
   refreshWindow();
 }
 
-function recordGraphData() {
-  const currentTime = new Date();
-  timeTakenToTypeAWordInSeconds = (currentTime - previousTime) / 1000;
-  previousTime = currentTime;
-  graphdata.push([wordTyping, timeTakenToTypeAWordInSeconds]);
-}
-
-async function textGenerator() {
-  let isConnectedToInternet = window.navigator.onLine;
-
-  if (isConnectedToInternet) {
-    sentenceText = await getRandomTextThroughApi();
-    if (sentenceText === undefined) {
-      let num = Math.floor(Math.random() * facts.length);
-      sentenceText = facts[num];
-    } else {
-      sentenceText = sentenceText.replace(
-        /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
-        ""
-      );
-    }
-  } else {
-    let num = Math.floor(Math.random() * facts.length);
-    sentenceText = facts[num];
-  }
-}
-
-// Condition to restart the game.
-async function onRestart(functionType) {
-  // Removing the endDisplay when the function is called.
-  endDisplay.style.display = "none";
-
+// Condition to restart ,playAgain or take Input depending on the arguments.
+// It is also async as it also waits for a function ot end.
+async function onRestartCondition(functionType) {
   // We check the type of function we have to use.
   switch (functionType) {
     case "restart":
@@ -140,12 +109,11 @@ async function onRestart(functionType) {
       break;
     case "playAgain":
       graphdata = [];
-      document.querySelector("#again").style.display = "none";
+      againButton.style.display = "none";
       break;
     case "userInput":
       PlayerData = [];
       graphdata = [];
-
       do {
         sentenceText = prompt("Enter a sentence  :  ");
       } while (
@@ -159,27 +127,50 @@ async function onRestart(functionType) {
       break;
   }
 
-  // "Work hard. Push yourself, because no one else is going to do it for you.";
-  sentence.innerHTML = `<h1>${sentenceText}</h1>`;
-
   index = 0;
-  wordTyping = [];
-  started = false;
   wrongCount = 0;
   letterCount = 0;
   backSpacesRequired = 0;
-  flag = true; // if flag is false then the last typed key will wrong.
+  currentWordTyping = [];
+  typingStarted = false;
+  errorFreeFlag = true;
 
-  // To check Restart the board :
+  // Changing the Html and css of the elements
+  endDisplay.style.display = "none";
+  sentence.innerHTML = `<h1>${sentenceText}</h1>`;
   textInput.style.display = "block";
   textInput.value = "";
-  endDisplay.innerHTML = "";
 
-  // To keep track of the time elasped.
   refreshWindow();
 }
 
+// Function genterates text based on the condition.
+async function textGenerator() {
+  let randomIndex = Math.floor(Math.random() * facts.length); // generating a random number for choosing a text.
+  sentenceText = "";
+
+  // Grabbing the text from api.
+  if (window.navigator.onLine) {
+    sentenceText = await getRandomTextThroughApi();
+  }
+
+  // Checking if the text is valid.
+  if (sentenceText === undefined || sentenceText.length === 0) {
+    sentenceText = facts[randomIndex];
+  } else {
+    // making the text easier to type.
+    sentenceText = sentenceText.replace(
+      /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
+      ""
+    );
+  }
+}
+
+// Return the a string from the api.
 function getRandomTextThroughApi() {
+  const apiUrl =
+    "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
+
   return fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
@@ -190,21 +181,153 @@ function getRandomTextThroughApi() {
     });
 }
 
+// Function to refresh Window when called.
+function refreshWindow() {
+  wrongCounter.innerHTML = `<p>Extra key-strokes : ${wrongCount} </p>`;
+
+  // To make the right corrected word green and wrong red and not typed word gray.
+  if (backSpacesRequired == 0) {
+    rightText = sentenceText.slice(0, letterCount);
+
+    if (letterCount == sentenceText.length) {
+      currentText = "";
+    } else {
+      currentText = sentenceText[letterCount];
+    }
+
+    remainingText = sentenceText.slice(letterCount + backSpacesRequired + 1);
+    sentence.innerHTML = `<h1><span id="right" >${rightText}</span><span id="currentText" >${currentText}</span><span id="remaining" >${remainingText}</span></h1>`;
+  } else {
+    rightText = sentenceText.slice(0, letterCount);
+
+    wrongText = sentenceText.slice(
+      letterCount,
+      letterCount + backSpacesRequired
+    );
+    remainingText = sentenceText.slice(letterCount + backSpacesRequired);
+    sentence.innerHTML = `<h1><span id="right" >${rightText}</span><span id="wrong" >${wrongText}</span><span id="remaining" >${remainingText}</span></h1>`;
+  }
+}
+
 // Function to handel the case when typing is started.
-function startCondition() {
+function typingStartedCondition() {
   console.log("Starting.");
-  started = true;
+  typingStarted = true;
   startTime = new Date();
   previousTime = new Date();
 }
+
+// Function to record the graph data for every word typed..
+function recordGraphData() {
+  const currentTime = new Date();
+  timeTakenToTypeAWordInSeconds = (currentTime - previousTime) / 1000;
+  previousTime = currentTime;
+  graphdata.push([currentWordTyping, timeTakenToTypeAWordInSeconds]);
+}
+
+// Function to check the key entered and take action accordingly.
+function checkKeyCondition(e) {
+  if (e.key === sentenceText[index]) {
+    currentWordTyping.push(e.key);
+    correctKeyConditionHandle();
+    return;
+  }
+  wrongKeyConditionHandle(e);
+}
+
+// Function to handel,if the key is correct.
+function correctKeyConditionHandle() {
+  // checking if any letter was wrong typed before it.
+  if (errorFreeFlag) {
+    // If this is the last character.
+    if (index === sentenceText.length - 1) {
+      endCondition();
+    } else {
+      index = index + 1;
+    }
+
+    letterCount = letterCount + 1;
+  } else {
+    wrongCount = wrongCount + 1;
+    backSpacesRequired = backSpacesRequired + 1;
+  }
+}
+
+// Function to handel,if the key is wrong.
+function wrongKeyConditionHandle(e) {
+  letterTyped = e.key;
+
+  if (letterTyped == "Backspace") {
+    currentWordTyping.pop();
+    backScpaceConditionHandle();
+
+    if (e.ctrlKey) deleteWholeWord();
+  } else if (
+    letterTyped == "Control" ||
+    letterTyped == "Shift" ||
+    letterTyped == "CapsLock" ||
+    letterTyped == "Enter" ||
+    letterTyped == "Tab"
+  ) {
+    return;
+  } else {
+    regularWrongConditionHandle();
+    currentWordTyping.push(letterTyped);
+  }
+}
+
+// Condition on pressing the backSpace key.
+function backScpaceConditionHandle() {
+  // errorFreeFlag tells us that the typing is error free.
+  if (errorFreeFlag) {
+    if (index != 0) index = index - 1;
+    if (letterCount != 0) letterCount--;
+    wrongCount++;
+  } else {
+    backSpacesRequired--;
+    if (backSpacesRequired == 0) {
+      errorFreeFlag = true;
+    }
+  }
+}
+
+// Delets the whole word when called.
+function deleteWholeWord() {
+  let wordLengthToDelete =
+    currentWordTyping.length - currentWordTyping.lastIndexOf(" ");
+
+  let newWord = currentWordTyping
+    .slice(0, currentWordTyping.length - wordLengthToDelete + 1)
+    .join("");
+
+  letterCount = letterCount - (currentWordTyping.length - backSpacesRequired);
+  index = letterCount;
+
+  if (wordLengthToDelete > backSpacesRequired) {
+    backSpacesRequired = 0;
+    errorFreeFlag = true;
+  } else {
+    backSpacesRequired = backSpacesRequired - wordLengthToDelete + 1;
+    errorFreeFlag = false;
+  }
+
+  currentWordTyping = newWord.split("");
+}
+
+// Function handel the state if the function is called.
+function regularWrongConditionHandle() {
+  backSpacesRequired++;
+  wrongCount++;
+  errorFreeFlag = false;
+}
+
 // Function to handel the case when typing is started.
 function endCondition() {
-  recordGraphData();
   endTime = new Date();
 
+  // Recording the last word and then generation the graphdata using the graphdata variable.
+  recordGraphData();
   generateGraph();
-
-  document.querySelector("#again").style.display = "inline-block"; // For the again button
 
   let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
   let timePassedInMinutes = timePassedInSeconds / 60;
@@ -213,7 +336,9 @@ function endCondition() {
   let rawSpeed = (letterCount + wrongCount) / (5 * timePassedInMinutes);
   let accuracy = 100 - (wrongCount / (letterCount + wrongCount)) * 100;
 
-  endDisplay.style.display = "block";
+  endDisplay.style.display = "block"; // Displaying the endDisplay.
+  textInput.style.display = "none"; // Hiding the text input.
+  againButton.style.display = "inline-block"; // Displaying the againButton.
 
   endDisplay.innerHTML = `
     <h1> Wpm : ${typingSpeed.toFixed(0)} </h1>
@@ -221,92 +346,11 @@ function endCondition() {
     <h1> Acurracy : ${accuracy.toFixed(2)} </h1>
     <p>${typingSpeedCompare[Math.floor(typingSpeed / 10) * 10]}</p>
     `;
-  textInput.style.display = "none";
-}
-// Function to check the key and update the values acoording to it.
-function checkKeyCondition(e) {
-  if (e.key == sentenceText[index]) {
-    wordTyping.push(e.key);
-    correctKeyCondition();
-    return;
-  }
 
-  wrongKeyCondition(e);
+  window.scrollTo(0, document.querySelector(".graphContainer").scrollHeight);
 }
 
-function correctKeyCondition() {
-  if (flag) {
-    // checking if any letter was wrong typed before it.
-    letterCount = letterCount + 1;
-    index = index + 1;
-  } else {
-    wrongCount = wrongCount + 1;
-    backSpacesRequired = backSpacesRequired + 1;
-  }
-}
-
-function wrongKeyCondition(e) {
-  let letter = e.key;
-  if (letter == "Backspace") {
-    wordTyping.pop();
-    backScpaceCondition();
-
-    // TODO:
-    if (e.ctrlKey) deleteWholeWord();
-  } else if (
-    letter == "Control" ||
-    letter == "Shift" ||
-    letter == "CapsLock" ||
-    letter == "Enter" ||
-    letter == "Tab"
-  ) {
-    return;
-  } else {
-    regularWrongCondition();
-    wordTyping.push(letter);
-  }
-}
-
-function backScpaceCondition() {
-  if (flag) {
-    if (index != 0) index = index - 1;
-    if (letterCount != 0) letterCount--;
-    wrongCount++;
-  } else {
-    backSpacesRequired--;
-    if (backSpacesRequired == 0) {
-      flag = true;
-    }
-  }
-}
-
-function deleteWholeWord() {
-  let wordLengthToDelete = wordTyping.length - wordTyping.lastIndexOf(" ");
-
-  let newWord = wordTyping
-    .slice(0, wordTyping.length - wordLengthToDelete + 1)
-    .join("");
-
-  letterCount = letterCount - (wordTyping.length - backSpacesRequired);
-  index = letterCount;
-
-  if (wordLengthToDelete > backSpacesRequired) {
-    backSpacesRequired = 0;
-    flag = true;
-  } else {
-    backSpacesRequired = backSpacesRequired - wordLengthToDelete + 1;
-    flag = false;
-  }
-
-  wordTyping = newWord.split("");
-}
-
-function regularWrongCondition() {
-  backSpacesRequired++;
-  wrongCount++;
-  flag = false;
-}
-
+// Generates the Graph when called.
 function generateGraph() {
   document.querySelector(".graphContainer").style.display = "flex";
   let ctx = document.getElementById("myChart").getContext("2d");
@@ -374,34 +418,4 @@ function generateGraph() {
   });
 
   chartCreated = true;
-}
-
-function refreshWindow() {
-  wrongCounter.innerHTML = `<p>Extra key-strokes : ${wrongCount} </p>`;
-  // letterCounter.innerHTML = `<p>Letter Count ${letterCount} </p>`;
-  // backSpacesCounter.innerHTML = `<p> Back Spaces needed : ${backSpacesRequired} </p>`;
-
-  // endDisplay.innerHTML = `<p>${sentenceText[index]}</p>`;
-
-  // backSpacesRequired > 0
-  //   ? (indicator.style.background = "red")
-  //   : (indicator.style.background = "green");
-
-  // To make the right corrected word green and wrong red and not typed word gray.
-  if (backSpacesRequired == 0) {
-    rightText = sentenceText.slice(0, letterCount);
-    currentText = sentenceText[letterCount];
-
-    remainingText = sentenceText.slice(letterCount + backSpacesRequired + 1);
-    sentence.innerHTML = `<h1><span id="right" >${rightText}</span><span id="currentText" >${currentText}</span><span id="remaining" >${remainingText}</span></h1>`;
-  } else {
-    rightText = sentenceText.slice(0, letterCount);
-
-    wrongText = sentenceText.slice(
-      letterCount,
-      letterCount + backSpacesRequired
-    );
-    remainingText = sentenceText.slice(letterCount + backSpacesRequired);
-    sentence.innerHTML = `<h1><span id="right" >${rightText}</span><span id="wrong" >${wrongText}</span><span id="remaining" >${remainingText}</span></h1>`;
-  }
 }
