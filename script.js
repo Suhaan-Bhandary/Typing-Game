@@ -203,7 +203,7 @@ function endCondition() {
 
   generateGraph();
 
-  document.querySelector(".again").style.display = "inline-block"; // For the again button
+  document.querySelector("#again").style.display = "inline-block"; // For the again button
 
   let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
   let timePassedInMinutes = timePassedInSeconds / 60;

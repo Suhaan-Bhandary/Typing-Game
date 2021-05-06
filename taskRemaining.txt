@@ -1,1 +1,7 @@
 All the task to do : 
+
+Format the code in a nice way.
+Add mobile support.
+Try to add addsense to the web app.
+
+Move this program to other location.
