@@ -59,10 +59,18 @@ let wrongCount,
   backSpacesRequired,
   flag,
   index,
-  sentenceText = "";
+  sentenceText = "",
+  playAgain = false,
+  chartCreated = false;
+
+let myChart;
 // if flag is false then the last typed key will wrong.
 let wordTyping;
-let started, startTime, endTime, previousTime;
+let started = false,
+  startTime,
+  endTime,
+  previousTime;
+let PlayerData = [];
 let graphdata = [];
 
 initialStructure(); // To form the initial structure of the page.
@@ -72,8 +80,6 @@ async function initialStructure() {
 
   textInput.addEventListener("keydown", (e) => {
     // Storing the start time.
-    console.log(e);
-
     if (started == false) startCondition();
 
     // Cheching the winning condition.
@@ -102,30 +108,32 @@ function recordGraphData() {
   timeTakenToTypeAWordInSeconds = (currentTime - previousTime) / 1000;
   previousTime = currentTime;
   graphdata.push([wordTyping, timeTakenToTypeAWordInSeconds]);
-  console.log(graphdata);
 }
 
 // Condition to restart the game.
 async function onRestart() {
+  graphdata = [];
+  started = false;
   let isConnectedToInternet = window.navigator.onLine;
   endDisplay.style.display = "none";
-  if (isConnectedToInternet) {
-    sentenceText = await getRandomText();
-    if (sentenceText === undefined) {
+  if (!playAgain) {
+    PlayerData = [];
+    if (isConnectedToInternet) {
+      sentenceText = await getRandomText();
+      if (sentenceText === undefined) {
+        let num = Math.floor(Math.random() * facts.length);
+        sentenceText = facts[num];
+      } else {
+        sentenceText = sentenceText.replace(
+          /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
+          ""
+        );
+      }
+    } else {
       let num = Math.floor(Math.random() * facts.length);
       sentenceText = facts[num];
-    } else {
-      console.log("From api");
-      sentenceText = sentenceText.replace(
-        /[`~@#$%^&*()_|+\-?;:<>\n\t\r\{\}\[\]\\\/]/gi,
-        ""
-      );
     }
-  } else {
-    let num = Math.floor(Math.random() * facts.length);
-    sentenceText = facts[num];
   }
-
   // "Work hard. Push yourself, because no one else is going to do it for you.";
   sentence.innerHTML = `<h1>${sentenceText}</h1>`;
 
@@ -143,11 +151,14 @@ async function onRestart() {
   endDisplay.innerHTML = "";
 
   // To keep track of the time elasped.
-  started = false;
-
   refreshWindow();
 }
 
+function OnPlayAgain() {
+  playAgain = true;
+  onRestart();
+  playAgain = false;
+}
 function getRandomText() {
   return fetch(apiUrl)
     .then((response) => response.json())
@@ -161,25 +172,26 @@ function getRandomText() {
 
 // Function to handel the case when typing is started.
 function startCondition() {
+  console.log("Starting.");
   started = true;
   startTime = new Date();
   previousTime = new Date();
-  console.log("Timmer started.");
 }
 // Function to handel the case when typing is started.
 function endCondition() {
   recordGraphData();
   generateGraph();
 
+  document.querySelector(".again").style.display = "inline-block"; // For the again button
+
   endTime = new Date();
-  let timePassedInSeconds = (endTime - startTime) / 1000;
+
+  let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
   let timePassedInMinutes = timePassedInSeconds / 60;
 
   let typingSpeed = letterCount / (5 * timePassedInMinutes);
   let rawSpeed = (letterCount + wrongCount) / (5 * timePassedInMinutes);
   let accuracy = 100 - (wrongCount / (letterCount + wrongCount)) * 100;
-
-  console.log(`Time taken to typing: ${timePassedInSeconds}sec`);
 
   endDisplay.style.display = "block";
 
@@ -215,8 +227,6 @@ function correctKeyCondition() {
 
 function wrongKeyCondition(e) {
   let letter = e.key;
-  console.log(letter);
-  console.log(sentenceText[index]);
   if (letter == "Backspace") {
     wordTyping.pop();
     backScpaceCondition();
@@ -269,8 +279,6 @@ function deleteWholeWord() {
   }
 
   wordTyping = newWord.split("");
-
-  console.log(wordTyping);
 }
 
 function regularWrongCondition() {
@@ -293,40 +301,37 @@ function generateGraph() {
     data.push(typingSpeed);
   });
 
-  let MinimumValue = Math.min(...data);
+  PlayerData.push({
+    label: PlayerData.length + 1,
+    data: data,
+    backgroundColor: [
+      "rgba(255, 99, 132, 0.2)",
+      "rgba(54, 162, 235, 0.2)",
+      "rgba(255, 206, 86, 0.2)",
+      "rgba(75, 192, 192, 0.2)",
+      "rgba(153, 102, 255, 0.2)",
+      "rgba(255, 159, 64, 0.2)",
+    ],
+    borderColor: [
+      "rgba(255, 99, 132, 1)",
+      "rgba(54, 162, 235, 1)",
+      "rgba(255, 206, 86, 1)",
+      "rgba(75, 192, 192, 1)",
+      "rgba(153, 102, 255, 1)",
+      "rgba(255, 159, 64, 1)",
+    ],
+    borderWidth: 1,
+  });
 
-  console.log(MinimumValue);
+  if (chartCreated) {
+    myChart.destroy();
+  }
 
-  console.log(lables);
-  console.log(data);
-
-  let myChart = new Chart(ctx, {
+  myChart = new Chart(ctx, {
     type: "line",
     data: {
       labels: lables,
-      datasets: [
-        {
-          label: "Words Vs Speed",
-          data: data,
-          backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
-          ],
-          borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
-          ],
-          borderWidth: 1,
-        },
-      ],
+      datasets: PlayerData,
     },
     options: {
       scales: {
@@ -334,14 +339,13 @@ function generateGraph() {
           ticks: {
             fontSize: 40,
           },
-          min:
-            MinimumValue - 5 > 0
-              ? Math.floor(MinimumValue - 5)
-              : Math.floor(MinimumValue),
+          min: 0,
         },
       },
     },
   });
+
+  chartCreated = true;
 }
 
 function refreshWindow() {

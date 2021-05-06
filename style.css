@@ -222,7 +222,7 @@ button {
 }
 
 #restart {
-  margin: 20px 0 10px 0;
+  padding: 20px;
 
   cursor: pointer;
   transition: 1.5s;
@@ -243,6 +243,12 @@ canvas#myChart {
   width: 50%;
 
   justify-content: center;
+
+  align-items: center;
+}
+
+.again {
+  display: none;
 }
 
 textarea#myTyping {
