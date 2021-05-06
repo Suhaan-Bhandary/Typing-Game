@@ -180,11 +180,11 @@ function startCondition() {
 // Function to handel the case when typing is started.
 function endCondition() {
   recordGraphData();
+  endTime = new Date();
+
   generateGraph();
 
   document.querySelector(".again").style.display = "inline-block"; // For the again button
-
-  endTime = new Date();
 
   let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
   let timePassedInMinutes = timePassedInSeconds / 60;
@@ -301,8 +301,19 @@ function generateGraph() {
     data.push(typingSpeed);
   });
 
+  let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
+  let timePassedInMinutes = timePassedInSeconds / 60;
+  let typingSpeed = letterCount / (5 * timePassedInMinutes);
+  let accuracy = 100 - (wrongCount / (letterCount + wrongCount)) * 100;
+
   PlayerData.push({
-    label: PlayerData.length + 1,
+    label:
+      (PlayerData.length + 1).toString() +
+      " : " +
+      typingSpeed.toFixed(0) +
+      "Wpm " +
+      accuracy.toFixed(0) +
+      "%",
     data: data,
     backgroundColor: [
       "rgba(255, 99, 132, 0.2)",
