@@ -5,12 +5,21 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- All the external links -->
   <link href="css/all.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"
     integrity="sha512-VMsZqo0ar06BMtg0tPsdgRADvl0kDHpTbugCBBrL55KmucH6hP9zWdLIWY//OTfMnzz6xWQRxQqsUFefwHuHyg=="
     crossorigin="anonymous"></script>
+
   <title>Typing Fight</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- All the internal links -->
+  <link rel="stylesheet" href="popUpContainer.css" />
+  <link rel="stylesheet" href="mainContainer.css" />
+  <link rel="stylesheet" href="graphContainer.css" />
+  <link rel="stylesheet" href="buttonStyle.css" />
+
 </head>
 
 <body>
@@ -20,7 +29,6 @@
       <p>Donot use mobile keyboard as it may cause some issues.</p>
       <button class="custom-btn btn-11" onclick="document.querySelector('.popUpContainer').style.display = 'none';">
         Start Typing
-        <div class="dot"></div>
       </button>
     </div>
   </div>
@@ -40,7 +48,7 @@
       </div>
     </div>
 
-    <button class="custom-btn btn-11 again" onclick="onRestart('playAgain');">
+    <button class="custom-btn btn-11" id="again" onclick="onRestart('playAgain');">
       Again
     </button>
 
