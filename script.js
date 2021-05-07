@@ -327,7 +327,8 @@ function endCondition() {
 
   // Recording the last word and then generation the graphdata using the graphdata variable.
   recordGraphData();
-  generateGraph();
+
+  if (window.navigator.onLine) generateGraph();
 
   let timePassedInSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
   let timePassedInMinutes = timePassedInSeconds / 60;
