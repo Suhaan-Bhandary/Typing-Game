@@ -141,6 +141,8 @@ async function onRestartCondition(functionType) {
   textInput.style.display = "block";
   textInput.value = "";
 
+  textInput.focus();
+  textInput.select();
   refreshWindow();
 }
 
